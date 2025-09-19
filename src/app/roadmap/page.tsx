@@ -57,7 +57,7 @@ export default function RoadmapIndex() {
         getRecommendations();
     }, []);
     return (
-        <div className="space-y-4 px-4 md:px-36 mt-24">
+        <div className="space-y-4 px-2 md:px-36 mt-24">
             <h1 className="text-4xl font-semibold text-blue-950">
                 {" "}
                 <Highlighter action="underline" color="#FF9800">

@@ -150,38 +150,41 @@ export default function OnboardingPage() {
     };
 
     return (
-        <div className="px-4 md:px-36 gap-5 mx-auto min-h-screen grid md:grid-cols-2 justify-center p-4 my-28">
-            <div className="">
-                <h1 className="text-4xl font-semibold text-blue-950">
-                    {" "}
+        <div className="px-2 pt-10 md:px-20 lg:px-36 gap-10 min-h-screen grid grid-cols-1 md:grid-cols-2 items-start my-16 md:my-28">
+            {/* Left Section */}
+            <div className="space-y-5">
+                <h1 className="text-3xl md:text-4xl font-semibold text-blue-950 leading-snug">
                     <Highlighter action="underline" color="#FF9800">
                         Tell Us About You
                     </Highlighter>
                 </h1>
 
-                <p className="text-muted-foreground text-pretty text-lg mt-5">
+                <p className="text-muted-foreground text-pretty text-base md:text-lg mt-4">
                     <Highlighter action="highlight" color="#87CEFA">
                         Help us personalize your career journey
-                    </Highlighter>
-                    y by sharing some details. The information you provide will
+                    </Highlighter>{" "}
+                    by sharing some details. The information you provide will
                     allow us to{" "}
                     <Highlighter action="underline" color="#FF9800">
                         recommend the best career paths,
                     </Highlighter>{" "}
-                    learning resources, and opportunities
+                    learning resources, and opportunities{" "}
                     <Highlighter action="highlight" color="#FF9800">
                         tailored to your profile.
-                    </Highlighter>{" "}
+                    </Highlighter>
                 </p>
             </div>
+
+            {/* Right Section (Form Card) */}
             <Card className="w-full">
                 <CardHeader>
                     <CardDescription>
                         We’ll personalize your career journey
                     </CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                    <div className="grid md:grid-cols-2 gap-4">
+                <CardContent className="space-y-6">
+                    {/* Age & Education */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="grid gap-2">
                             <Label htmlFor="age">Age</Label>
                             <Input
@@ -217,6 +220,7 @@ export default function OnboardingPage() {
                         </div>
                     </div>
 
+                    {/* Industries */}
                     <div className="grid gap-2">
                         <Label>Preferred industries</Label>
                         <Input
@@ -231,6 +235,7 @@ export default function OnboardingPage() {
                         </p>
                     </div>
 
+                    {/* Interests */}
                     <div className="grid gap-2">
                         <Label>Interests</Label>
                         <Textarea
@@ -243,6 +248,7 @@ export default function OnboardingPage() {
                         </p>
                     </div>
 
+                    {/* Resume Upload */}
                     <div className="grid gap-2">
                         <Label>Upload resume or paste LinkedIn URL</Label>
                         <Input
@@ -261,24 +267,9 @@ export default function OnboardingPage() {
                                 "We’ll auto-extract skills."
                             )}
                         </p>
-                        {/* <Input
-                            placeholder="https://www.linkedin.com/in/your-handle"
-                            value={linkedInProfile}
-                            onChange={handleLinkedInChange}
-                            disabled={resumeFile !== null}
-                        />
-                        <p className="text-xs text-muted-foreground flex items-center gap-1">
-                            {extracting ? (
-                                <>
-                                    <Loader2 className="animate-spin size-4" />
-                                    Extracting skills from resume...
-                                </>
-                            ) : (
-                                "We’ll auto-extract skills."
-                            )}
-                        </p> */}
                     </div>
 
+                    {/* Location */}
                     <div className="grid gap-2">
                         <Label>Location</Label>
                         <Input
@@ -288,9 +279,10 @@ export default function OnboardingPage() {
                         />
                     </div>
 
-                    <div className="flex items-center gap-3">
+                    {/* Buttons */}
+                    <div className="flex flex-col sm:flex-row gap-3">
                         <Button
-                            className=""
+                            className="flex-1"
                             onClick={handleSubmit}
                             disabled={loading}
                         >
@@ -298,6 +290,7 @@ export default function OnboardingPage() {
                         </Button>
                         <Button
                             variant="outline"
+                            className="flex-1"
                             onClick={() => router.push("/")}
                         >
                             Skip for now
