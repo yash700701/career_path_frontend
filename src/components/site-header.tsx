@@ -38,10 +38,10 @@ export function SiteHeader() {
     };
 
     const handleClick = () => {
-        if (token) {
-            router.push("/onboarding");
-        } else {
+        if (!token) {
             router.push("/login");
+        } else {
+            router.push("/onboarding");
         }
     };
 

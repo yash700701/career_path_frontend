@@ -129,10 +129,10 @@ export default function HomePage() {
     const router = useRouter();
     const token = useSelector((state: RootState) => state.auth.token);
      const handleClick = () => {
-        if (token) {
-            router.push("/onboarding");
-        } else {
+        if (!token) {
             router.push("/login");
+        } else {
+            router.push("/onboarding");
         }
     };
     return (
