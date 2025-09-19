@@ -29,6 +29,7 @@ import {
 import { RootState, AppDispatch } from "@/store/store";
 import { Highlighter } from "@/components/ui/highlighter";
 import { Badge } from "@/components/ui/badge";
+import { useRouter } from "next/navigation"
 
 const data = [
     { subject: "Analysis", A: 80 },
@@ -57,6 +58,7 @@ interface Career {
 
 export default function AssessmentPage() {
     const port = process.env.NEXT_PUBLIC_API_PORT;
+    const router = useRouter()
     const token = useSelector((state: RootState) => state.auth.token);
     const quizCompleted = useSelector(
         (state: RootState) => state.auth.quizCompleted
@@ -266,6 +268,9 @@ export default function AssessmentPage() {
     };
 
     const createQuiz = async () => {
+        if (!token) {
+      router.push("/login")
+    }
         setLoading(true);
         try {
             const response = await axios.post(

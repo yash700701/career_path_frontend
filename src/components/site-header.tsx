@@ -11,6 +11,7 @@ import menu from "../../public/app.png";
 import type { RootState, AppDispatch } from "@/store/store";
 import logo from "../../public/CareerPath_Logo_Design-removebg-preview.png";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 const nav = [
     { href: "/", label: "Home" },
@@ -28,17 +29,31 @@ export function SiteHeader() {
 
     const { user } = useSelector((state: RootState) => state.auth);
     const dispatch = useDispatch<AppDispatch>();
+    const router = useRouter();
+    const token = useSelector((state: RootState) => state.auth.token);
 
     const handleLogout = () => {
         dispatch(logout());
         setProfileMenuOpen(false);
     };
 
+    const handleClick = () => {
+        if (token) {
+            router.push("/onboarding");
+        } else {
+            router.push("/login");
+        }
+    };
+
     return (
         <header className="z-50 border-b bg-background/20 w-full fixed top-0 backdrop-blur supports-[backdrop-filter]:bg-background/60">
             <div className="container mx-auto px-4 md:px-36 h-20 flex items-center justify-between">
                 <Link href="/" className="font-semibold text-lg">
-                    <Image src={logo} alt="logo" className="sm:h-12 sm:w-32 h-10 w-28 " />
+                    <Image
+                        src={logo}
+                        alt="logo"
+                        className="sm:h-12 sm:w-32 h-10 w-28 "
+                    />
                 </Link>
 
                 <nav className="hidden md:flex items-center gap-4">
@@ -98,9 +113,7 @@ export function SiteHeader() {
                         </Button>
                     )}
 
-                    <Button asChild>
-                        <Link href="/onboarding">Get Started</Link>
-                    </Button>
+                    <Button onClick={handleClick}>Get Started</Button>
                     <button
                         aria-label="Toggle Menu"
                         className={cn("md:hidden p-2 rounded hover:bg-muted")}

@@ -15,11 +15,14 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
-import { MagicCard } from "../components/ui/magic-card";
 import { useTheme } from "next-themes";
 import interview from "../../public/christina-wocintechchat-com-LQ1t-8Ms5PY-unsplash.jpg";
 import resumeBuilder from "../../public/resume-genius-9si2noVCVH8-unsplash (1).jpg";
 import { User, FileText, ClipboardList, Brain, Target } from "lucide-react";
+import { useSelector } from "react-redux";
+import type { RootState } from "@/store/store";
+import { useRouter } from "next/navigation";
+
 
 const steps = [
     {
@@ -125,6 +128,15 @@ const ReviewCard = ({
 
 export default function HomePage() {
     const { theme } = useTheme();
+    const router = useRouter();
+    const token = useSelector((state: RootState) => state.auth.token);
+     const handleClick = () => {
+        if (token) {
+            router.push("/onboarding");
+        } else {
+            router.push("/login");
+        }
+    };
     return (
         <div className="space-y-10 px-2 md:px-36">
             <section className="text-center mt-28 text-blue-950 max-w-3xl mx-auto space-y-4">
@@ -153,9 +165,7 @@ export default function HomePage() {
                     </Highlighter>
                 </p>
                 <div className="flex items-center mt-8 justify-center gap-3">
-                    <Button asChild className="">
-                        <Link href="/onboarding">Get Started</Link>
-                    </Button>
+                    <Button onClick={handleClick}>Get Started</Button>
                     <Button asChild>
                         <Link href="/assessment">Try Assessment</Link>
                     </Button>
