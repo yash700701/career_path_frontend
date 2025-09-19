@@ -298,7 +298,7 @@ export default function OnboardingPage() {
                         </Button>
                         <Button
                             variant="outline"
-                            onClick={() => router.push("/dashboard")}
+                            onClick={() => router.push("/")}
                         >
                             Skip for now
                         </Button>

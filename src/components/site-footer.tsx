@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 
 export function SiteFooter() {
-    const [message ] = useState("");
+    const [message] = useState("");
     // const port = process.env.NEXT_PUBLIC_API_PORT || "";
     // useEffect(() => {
     //     const intervalId = setInterval(() => {
@@ -29,16 +29,16 @@ export function SiteFooter() {
     //     return () => clearInterval(intervalId); // Cleanup on unmount
     // }, [port]);
     return (
-        <footer className="border-t bg-white fixed bottom-0 w-full px-4 md:px-36">
+        <footer className="border-t bg-white w-full px-4 md:px-36">
             <div className="container mx-auto p-4 flex flex-col md:flex-row items-center justify-between gap-3 text-sm text-muted-foreground">
-                <p>© {new Date().getFullYear()} CareerPath</p>
-               
-                    <p>
-                        <span className="text-green-600 text-lg">● </span>system is healthy{" "}
-                        {message}
-                    </p>
-              
+                <div className="flex items-center gap-4">
+                    <p>© {new Date().getFullYear()} CareerPath</p>
 
+                    <p>
+                        <span className="text-green-600 text-lg">● </span>system
+                        is healthy {message}
+                    </p>
+                </div>
                 <div className="flex items-center gap-4">
                     <Link href="/community">Community</Link>
                     <Link href="/trends">Market Trends</Link>

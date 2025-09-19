@@ -340,7 +340,7 @@ export default function AssessmentPage() {
     };
 
     return (
-        <div className="space-y-6 px-4 md:px-36 mt-24 mb-10">
+        <div className="space-y-6 px-2 md:px-36 mt-24 mb-10">
             <h1 className="text-4xl font-semibold text-blue-950">
                 {" "}
                 <Highlighter action="underline" color="#FF9800">
@@ -358,12 +358,13 @@ export default function AssessmentPage() {
                 </Highlighter>
             </p>
             <Tabs defaultValue="skills" className="space-y-6">
-                <TabsList className="flex flex-wrap">
-                    <TabsTrigger value="skills">
-                        Step 1: Skills & Interests
+                <TabsList className="flex gap-2 w-full justify-center">
+                    <TabsTrigger value="skills" className="text-center text-xs sm:text-md">
+                        1: Skills & Interests
                     </TabsTrigger>
-                    <TabsTrigger value="paths">
-                        Step 2: Career Recommendations
+
+                    <TabsTrigger value="paths" className="text-center text-xs sm:text-md">
+                        2: Career Recommendations
                     </TabsTrigger>
                 </TabsList>
 
@@ -506,7 +507,7 @@ export default function AssessmentPage() {
                                                 onClick={
                                                     generateCareerRecommendation
                                                 }
-                                                className="mt-3"
+                                                className="mt-3 text-xs sm:text-md"
                                                 disabled={
                                                     generatingRecommendation
                                                 }
@@ -609,11 +610,11 @@ export default function AssessmentPage() {
                         )}
 
                         {/* Career Recommendation Cards */}
-                        <div className="grid md:grid-cols-2 gap-5">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                             {recommendations?.map((rec, idx) => (
                                 <Card
                                     key={idx}
-                                    className="shadow-md hover:shadow-lg transition rounded-2xl"
+                                    className="shadow-md hover:shadow-lg transition rounded-2xl overflow-x-hidden"
                                 >
                                     <CardHeader>
                                         <CardTitle className="flex items-center justify-between">

@@ -18,7 +18,7 @@ import {
 import { MagicCard } from "../components/ui/magic-card";
 import { useTheme } from "next-themes";
 import interview from "../../public/christina-wocintechchat-com-LQ1t-8Ms5PY-unsplash.jpg";
-import resumeBuilder from "../../public/christina-wocintechchat-com-LQ1t-8Ms5PY-unsplash.jpg";
+import resumeBuilder from "../../public/resume-genius-9si2noVCVH8-unsplash (1).jpg";
 import { User, FileText, ClipboardList, Brain, Target } from "lucide-react";
 
 const steps = [
@@ -126,9 +126,9 @@ const ReviewCard = ({
 export default function HomePage() {
     const { theme } = useTheme();
     return (
-        <div className="space-y-10 px-4 md:px-36">
+        <div className="space-y-10 px-2 md:px-36">
             <section className="text-center mt-28 text-blue-950 max-w-3xl mx-auto space-y-4">
-                <h1 className="text-6xl md:text-[70px] font-semibold text-balance">
+                <h1 className="text-5xl md:text-[70px] font-semibold text-balance">
                     Your{" "}
                     <Highlighter action="underline" color="#FF9800">
                         <p className="italic">AI-Powered</p>
@@ -138,12 +138,18 @@ export default function HomePage() {
                         Guide
                     </Highlighter>
                 </h1>
-                <p className="text-muted-foreground text-pretty text-lg">
+                <p className="text-muted-foreground text-pretty pt-5 text-lg">
                     <Highlighter action="highlight" color="#FF9800">
                         Personalized
                     </Highlighter>{" "}
                     <Highlighter action="underline" color="#172554">
-                        career roadmap, skill analysis, and job readiness.
+                        career roadmap,
+                    </Highlighter>{" "}
+                    <Highlighter action="underline" color="#172554">
+                        skill analysis,
+                    </Highlighter>{" "}
+                    <Highlighter action="underline" color="#172554">
+                        and job readiness.
                     </Highlighter>
                 </p>
                 <div className="flex items-center mt-8 justify-center gap-3">
@@ -156,7 +162,7 @@ export default function HomePage() {
                 </div>
             </section>
 
-            <section className="grid md:grid-cols-4 gap-4">
+            <section className="grid md:grid-cols-4 gap-3">
                 {[
                     "AI-Powered Career Guidance",
                     "Skill Gap Analysis",
@@ -165,30 +171,23 @@ export default function HomePage() {
                 ].map((title) => (
                     <Card
                         key={title}
-                        className=" max-w-sm w-full border-none shadow-none"
+                        className=" max-w-sm w-full border shadow"
                     >
-                        <MagicCard
-                            gradientColor={
-                                theme === "dark" ? "#262626" : "#D9D9D955"
-                            }
-                            className="p-2 "
-                        >
-                            <CardHeader className="p-4 ">
-                                <CardTitle className="text-blue-950 text-lg">
-                                    {title}
-                                </CardTitle>
-                                <CardDescription className="mt-3">
-                                    Lorem ipsum dolor sit amet consectetur
-                                    adipisicing elit. Inventore totam, dolor a
-                                </CardDescription>
-                            </CardHeader>
-                        </MagicCard>
+                        <CardHeader className="p-4 ">
+                            <CardTitle className="text-blue-950 text-lg">
+                                {title}
+                            </CardTitle>
+                            <CardDescription className="mt-3">
+                                Lorem ipsum dolor sit amet consectetur
+                                adipisicing elit. Inventore totam, dolor a
+                            </CardDescription>
+                        </CardHeader>
                     </Card>
                 ))}
             </section>
 
             <section className="py-10">
-                <div className="container mx-auto px-6 text-center">
+                <div className="container mx-auto text-center">
                     <h1 className="text-4xl font-semibold text-blue-950">
                         Your Career Journey in{" "}
                         <Highlighter action="underline" color="#FF9800">
@@ -196,22 +195,21 @@ export default function HomePage() {
                         </Highlighter>
                     </h1>
 
-                    <div className="grid md:grid-cols-3 mt-10 gap-5 auto-rows-fr">
+                    <div className="grid md:grid-cols-3 mt-10 gap-3">
                         {steps.map((step, i) => (
                             <Card
                                 key={i}
                                 className="border shadow flex flex-col"
                             >
-                                    <CardContent className=" flex flex-col items-center justify-center text-center space-y-4 flex-1">
-                                        <div>{step.icon}</div>
-                                        <h3 className="font-semibold text-lg">
-                                            {step.title}
-                                        </h3>
-                                        <p className="text-sm text-gray-600">
-                                            {step.desc}
-                                        </p>
-                                    </CardContent>
-                                
+                                <CardContent className=" flex flex-col items-center justify-center text-center space-y-4 flex-1">
+                                    <div>{step.icon}</div>
+                                    <h3 className="font-semibold text-lg">
+                                        {step.title}
+                                    </h3>
+                                    <p className="text-sm text-gray-600">
+                                        {step.desc}
+                                    </p>
+                                </CardContent>
                             </Card>
                         ))}
                     </div>
@@ -255,37 +253,6 @@ export default function HomePage() {
                 </div>
             </section>
 
-            <section className="space-y-4 pt-20">
-                <h1 className="text-4xl font-semibold text-blue-950">
-                    {" "}
-                    <Highlighter action="underline" color="#FF9800">
-                        Testimonials
-                    </Highlighter>
-                </h1>
-                <p className="text-muted-foreground text-pretty text-lg">
-                    Don’t just take our word for it — hear from students,
-                    graduates, and professionals who have discovered their ideal
-                    career paths through our platform. Their stories highlight
-                    how personalized recommendations and structured roadmaps
-                    made their journeys clearer, faster, and more achievable.
-                </p>
-
-                <div className="mt-5 relative flex w-full flex-col items-center justify-center overflow-hidden">
-                    <Marquee pauseOnHover className="[--duration:20s]">
-                        {firstRow.map((review) => (
-                            <ReviewCard key={review.username} {...review} />
-                        ))}
-                    </Marquee>
-                    <Marquee reverse pauseOnHover className="[--duration:20s]">
-                        {secondRow.map((review) => (
-                            <ReviewCard key={review.username} {...review} />
-                        ))}
-                    </Marquee>
-                    <div className="pointer-events-none absolute inset-y-0 left-0 w-1/4 bg-gradient-to-r from-background"></div>
-                    <div className="pointer-events-none absolute inset-y-0 right-0 w-1/4 bg-gradient-to-l from-background"></div>
-                </div>
-            </section>
-
             <section className="py-16">
                 <div className="container mx-auto grid md:grid-cols-2 items-center gap-12">
                     {/* Left Content */}
@@ -322,15 +289,72 @@ export default function HomePage() {
                 </div>
             </section>
 
-    
-            <div className="fixed bottom-20 p-2 shadow-blue-950/40 shadow-lg rounded-md  bg-white flex gap-3 right-5">
-                <p className="text-blue-950 text-sm ">
+            <section className="">
+                <div className="container mx-auto grid md:grid-cols-2 items-center gap-12">
+                    {/* Left Content */}
+                    <div className="space-y-6">
+                        <h1 className="text-4xl font-semibold text-blue-950">
+                            {" "}
+                            Your Personal Career{" "}
+                            <Highlighter action="underline" color="#FF9800">
+                                Chatbot
+                            </Highlighter>
+                        </h1>
+                        <p className="text-muted-foreground text-pretty text-lg">
+                            Get instant answers, personalized guidance, and
+                            step-by-step support for your career journey. Our
+                            AI-powered chatbot is always ready to help you with
+                            interview tips, resume feedback, or career advice —
+                            anytime you need it.
+                        </p>
+                        <Link href="/chat">
+                            <Button size="lg" className="">
+                                Chat Now
+                            </Button>
+                        </Link>
+                    </div>
+
+                    {/* Right Content (Optional placeholder for balance) */}
+                    <div className="hidden md:flex justify-center">
+                        <div className="bg-gradient-to-r from-blue-100 to-indigo-100 rounded-2xl p-10 text-center shadow-inner w-full h-full flex items-center justify-center">
+                            <p className="text-blue-950 font-medium text-lg">
+                                💬 Always here to guide you
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section className="space-y-4 pt-10">
+                <h1 className="text-4xl font-semibold text-blue-950">
+                    {" "}
                     <Highlighter action="underline" color="#FF9800">
-                        Personalized chat
+                        Testimonials
                     </Highlighter>
+                </h1>
+                <p className="text-muted-foreground text-pretty text-lg">
+                    Don’t just take our word for it — hear from students,
+                    graduates, and professionals who have discovered their ideal
+                    career paths through our platform. Their stories highlight
+                    how personalized recommendations and structured roadmaps
+                    made their journeys clearer, faster, and more achievable.
                 </p>
-                <Image src={chat} alt="chat" className="w-6 h-6" />
-            </div>
+
+                <div className="mt-5 relative flex w-full flex-col items-center justify-center overflow-hidden">
+                    <Marquee pauseOnHover className="[--duration:20s]">
+                        {firstRow.map((review) => (
+                            <ReviewCard key={review.username} {...review} />
+                        ))}
+                    </Marquee>
+                    <Marquee reverse pauseOnHover className="[--duration:20s]">
+                        {secondRow.map((review) => (
+                            <ReviewCard key={review.username} {...review} />
+                        ))}
+                    </Marquee>
+                    <div className="pointer-events-none absolute inset-y-0 left-0 w-1/4 bg-gradient-to-r from-background"></div>
+                    <div className="pointer-events-none absolute inset-y-0 right-0 w-1/4 bg-gradient-to-l from-background"></div>
+                </div>
+            </section>
         </div>
     );
 }

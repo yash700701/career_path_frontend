@@ -9,10 +9,11 @@ import { logout } from "@/store/authSlice";
 import User from "../../public/user.png";
 import menu from "../../public/app.png";
 import type { RootState, AppDispatch } from "@/store/store";
-import logo from "../../public/CareerPath Logo Design.png";
+import logo from "../../public/CareerPath_Logo_Design-removebg-preview.png";
 import Image from "next/image";
 
 const nav = [
+    { href: "/", label: "Home" },
     { href: "/assessment", label: "Assessment" },
     { href: "/roadmap", label: "Roadmaps" },
     { href: "/skills", label: "Skills Hub" },
@@ -37,7 +38,7 @@ export function SiteHeader() {
         <header className="z-50 border-b bg-background/20 w-full fixed top-0 backdrop-blur supports-[backdrop-filter]:bg-background/60">
             <div className="container mx-auto px-4 md:px-36 h-20 flex items-center justify-between">
                 <Link href="/" className="font-semibold text-lg">
-                    <Image src={logo} alt="logo" className="h-16 w-36" />
+                    <Image src={logo} alt="logo" className="sm:h-12 sm:w-32 h-10 w-28 " />
                 </Link>
 
                 <nav className="hidden md:flex items-center gap-4">
