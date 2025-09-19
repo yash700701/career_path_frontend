@@ -10,6 +10,8 @@ import {
     CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
     Radar,
@@ -19,11 +21,14 @@ import {
     PolarRadiusAxis,
     ResponsiveContainer,
 } from "recharts";
-import Link from "next/link";
 import { useSelector, useDispatch } from "react-redux";
-import { setQuizCompleted } from "../../store/authSlice";
-import { RootState, AppDispatch } from "@/store/store"; // ensure this is correctly exported from your store
+import {
+    setQuizCompleted,
+    setRecommendationGenerated,
+} from "../../store/authSlice";
+import { RootState, AppDispatch } from "@/store/store";
 import { Highlighter } from "@/components/ui/highlighter";
+import { Badge } from "@/components/ui/badge";
 
 const data = [
     { subject: "Analysis", A: 80 },
@@ -38,37 +43,189 @@ type HistoryItem = {
     parts: { text: string }[];
 };
 
+interface Career {
+    title: string;
+    industry: string;
+    matchScore: number;
+    whyRecommended: string;
+    requiredSkills: string[];
+    averagePackage: string;
+    futureScope: string;
+    learningResources: { name: string; link: string; type: string }[];
+    roadmap: string[];
+}
+
 export default function AssessmentPage() {
+    const port = process.env.NEXT_PUBLIC_API_PORT;
     const token = useSelector((state: RootState) => state.auth.token);
     const quizCompleted = useSelector(
         (state: RootState) => state.auth.quizCompleted
     );
-
+    const recommendationGenerated = useSelector(
+        (state: RootState) => state.auth.recommendationGenerated
+    );
     const [quizId, setQuizId] = useState("");
-
     const dispatch = useDispatch<AppDispatch>();
-    const port = process.env.NEXT_PUBLIC_API_PORT;
     const [quizStarted, setQuizStarted] = useState(false);
     const [loading, setLoading] = useState(false);
     const [loadingGemini, setLoadingGemini] = useState(false);
     const [history, setHistory] = useState<HistoryItem[]>([]);
     const [generatingQuestion, setGeneratingQuestion] = useState(false);
+    const [generatingRecommendation, setGeneratingRecommendation] =
+        useState(false);
+    const [generatedRecommendation, setGeneratedRecommendation] =
+        useState(false);
+    const [recommendations, setRecommendations] = useState<Career[]>([]);
+    const [summary, setSummary] = useState("");
     const [currentQuestion, setCurrentQuestion] = useState("");
     const [answer, setAnswer] = useState("");
-    const [userDetail, setUserDetail] = useState(
-        "user is intrested in software development and ai , he is good at coding and analysis, he has leadership qualities, he is also good at communication, he has done btech in computer science, he is 22 years old, he lives in delhi, india, he has interned at google as a software engineer intern, he is looking for roles in product based companies, he has skills in python, javascript, react, nodejs, expressjs, mongodb, mysql, html, css, figma, photoshop, excel, powerpoint, data structures and algorithms, he is also good at problem solving, he has good logical thinking, he is also good at mathematics, he is also good at statistics, he is also good at data analysis, he is also good at data visualization, he is also good at machine learning, he is also good at deep learning, he is also good at ai, he is also good at cloud computing, he is also good at devops, he is also good at linux, he is also good at git, he is also good at github, he is also good at docker, he is also good at kubernetes, he is also good at aws, he is also good at azure, he is also good at gcp, he is also good at terraform, he is also good at ansible, he is also good at jenkins, he is also good at ci/cd, he is also good at agile methodologies, he is also good at scrum, he is also good at kanban, he is also good at project management, he is also good at teamwork, he is also good at leadership qualities"
-    );
     const [questionIndex, setQuestionIndex] = useState(0);
     const [isQuizOver, setIsQuizOver] = useState(false);
 
+    const [userInfo, setUserInfo] = useState({});
+    const [resumeInfo, setResumeInfo] = useState({});
+
+    useEffect(() => {
+        const getRecommendations = async () => {
+            try {
+                const headers = {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                };
+
+                const response = await axios.get(
+                    `${port}/api/career/get-generatedRecommendation`,
+                    { headers }
+                );
+
+                if (response.data) {
+                    setGeneratedRecommendation(true);
+                    setRecommendations(
+                        response.data.profile.recommendedCareers
+                    );
+                    setSummary(response.data.profile.summary);
+                    dispatch(
+                        setRecommendationGenerated({
+                            recommendationGenerated: true,
+                        })
+                    );
+                }
+            } catch (err) {
+                console.error("Failed to get career recommendation:", err);
+            }
+        };
+        getRecommendations();
+    }, []);
+
+    useEffect(() => {
+        const getUserDetail = async () => {
+            try {
+                const headers = {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                };
+
+                const [resumeRes, profileRes] = await Promise.all([
+                    axios.get(`${port}/api/upload/get-resume`, { headers }),
+                    axios.get(`${port}/api/auth/profile`, { headers }),
+                ]);
+
+                const resume = resumeRes.data.data;
+                const user = profileRes.data.user;
+
+                if (!resume || !user) {
+                    toast.info(
+                        "Missing data: Fill onboarding form and upload resume"
+                    );
+                    return;
+                }
+
+                console.log(resume);
+                console.log(user);
+
+                setUserInfo(user);
+                setResumeInfo(resume);
+            } catch (err) {
+                console.error("Failed to get career recommendation:", err);
+            }
+        };
+        getUserDetail();
+    }, []);
+
+    const generateCareerRecommendation = async () => {
+        setGeneratingRecommendation(true);
+        try {
+            const headers = {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            };
+
+            // fetch all three in parallel
+            const [quizRes, resumeRes, profileRes] = await Promise.all([
+                axios.get(`${port}/api/quiz/return-quiz`, { headers }),
+                axios.get(`${port}/api/upload/get-resume`, { headers }),
+                axios.get(`${port}/api/auth/profile`, { headers }),
+            ]);
+
+            const questions = quizRes.data.questions; // keep as array/object
+            const resume = resumeRes.data.data;
+            const user = profileRes.data.user;
+
+            // sanity check
+            if (!questions || !resume || !user) {
+                toast.info(
+                    "Missing data: please ensure quiz, resume and profile exist."
+                );
+                return;
+            }
+
+            // send to backend
+            const response = await axios.post(
+                `${port}/api/career/generateRecommendation`,
+                {
+                    userProfile: user,
+                    QuizAnswers: questions,
+                    ResumeData: resume,
+                },
+                { headers }
+            );
+
+            if (response) {
+                setGeneratedRecommendation(true);
+                setRecommendations(response.data.profile.recommendedCareers);
+                setSummary(response.data.profile.summary);
+                dispatch(
+                    setRecommendationGenerated({
+                        recommendationGenerated: true,
+                    })
+                );
+            }
+            console.log(
+                "generateCareerRecommendation result:",
+                response.data.profile
+            );
+            toast.success("Recommendation generated!");
+        } catch (err) {
+            console.error("Failed to generate career recommendation:", err);
+            toast.error("Error generating career recommendation");
+        } finally {
+            setGeneratingRecommendation(false);
+        }
+    };
+
     const nextQuestion = async () => {
+        if (!userInfo || !resumeInfo) {
+            toast.info("Missing data: Fill onboarding form and upload resume");
+            return;
+        }
         setGeneratingQuestion(true);
         try {
             const response = await axios.post(
                 `${port}/api/quiz/quiz-handler`,
                 {
                     history: history,
-                    userDetail: userDetail,
+                    userDetail: userInfo,
+                    resumeDetail: resumeInfo,
                 },
                 {
                     headers: {
@@ -82,7 +239,7 @@ export default function AssessmentPage() {
 
             if (data.error) {
                 console.error(data.error);
-                alert("Error generating question");
+                toast.error("Model is overloaded - error generating");
                 return;
             }
 
@@ -102,7 +259,7 @@ export default function AssessmentPage() {
             ]);
         } catch (err) {
             console.error("Failed to generate question:", err);
-            alert("Error generating question");
+            toast.error("Error generating question");
         } finally {
             setGeneratingQuestion(false);
         }
@@ -127,12 +284,11 @@ export default function AssessmentPage() {
                 setIsQuizOver(false);
                 setQuizId(response.data.quizId);
                 dispatch(setQuizCompleted({ quizCompleted: false }));
-                // save quiz id response.data.quizId
                 nextQuestion();
             }
         } catch (error) {
             console.error("Failed to start quiz:", error);
-            alert("Failed to start quiz.");
+            toast.error("Failed to start quiz.");
         } finally {
             setLoading(false);
         }
@@ -176,7 +332,8 @@ export default function AssessmentPage() {
                 nextQuestion();
             }
         } catch (error) {
-            console.error("Error saving rrecords:", error);
+            console.error("Error saving records:", error);
+            toast.error("Error saving records");
         } finally {
             setLoadingGemini(false);
         }
@@ -257,21 +414,29 @@ export default function AssessmentPage() {
                                         {quizStarted && !isQuizOver && (
                                             <Card>
                                                 <CardHeader>
-                                                    <CardTitle>
+                                                    <CardTitle className="text-blue-950">
                                                         Quiz Question{" "}
                                                         {questionIndex + 1}
                                                     </CardTitle>
                                                     <CardDescription>
-                                                        Answer the following
-                                                        question.
+                                                        <Highlighter
+                                                            action="highlight"
+                                                            color="#87CEFA"
+                                                        >
+                                                            Answer the following
+                                                            10 question.
+                                                        </Highlighter>
                                                     </CardDescription>
                                                 </CardHeader>
                                                 <CardContent className="space-y-4">
                                                     {generatingQuestion ? (
-                                                        <p>
-                                                            Generating
-                                                            question...
-                                                        </p>
+                                                        <div className="flex gap-2 text-green-600">
+                                                            <Loader2 className="animate-spin size-4" />
+                                                            <p>
+                                                                Generating
+                                                                question...
+                                                            </p>
+                                                        </div>
                                                     ) : (
                                                         <p>{currentQuestion}</p>
                                                     )}
@@ -322,15 +487,58 @@ export default function AssessmentPage() {
                                 ) : (
                                     <Card>
                                         <CardHeader>
-                                            <CardTitle>
+                                            <CardTitle className="text-blue-950">
                                                 Quiz Already Completed
                                             </CardTitle>
                                         </CardHeader>
                                         <CardContent>
                                             <p>
-                                                You have already completed this
-                                                quiz. Thank you!
+                                                You have{" "}
+                                                <Highlighter
+                                                    action="highlight"
+                                                    color="#87CEFA"
+                                                >
+                                                    already completed
+                                                </Highlighter>{" "}
+                                                this quiz. Thank you!
                                             </p>
+                                            <Button
+                                                onClick={
+                                                    generateCareerRecommendation
+                                                }
+                                                className="mt-3"
+                                                disabled={
+                                                    generatingRecommendation
+                                                }
+                                            >
+                                                Generate Career Recommendations
+                                            </Button>
+                                            {generatingRecommendation && (
+                                                <div className="flex gap-3 mt-4">
+                                                    <Loader2 className="animate-spin size-4" />
+                                                    <p className="text-green-600">
+                                                        Generating career
+                                                        recommendations...
+                                                    </p>
+                                                </div>
+                                            )}
+                                            {!generatingRecommendation &&
+                                                (generatedRecommendation ||
+                                                    recommendationGenerated) && (
+                                                    <p className="text-green-600 mt-4">
+                                                        Recommendation Generated
+                                                        :{" "}
+                                                        <span className="text-blue-950">
+                                                            {" "}
+                                                            <Highlighter
+                                                                action="underline"
+                                                                color="#FF9800"
+                                                            >
+                                                                Go to step 2
+                                                            </Highlighter>
+                                                        </span>
+                                                    </p>
+                                                )}
                                         </CardContent>
                                     </Card>
                                 )}
@@ -380,54 +588,113 @@ export default function AssessmentPage() {
 
                 {/* Tab: Paths */}
                 <TabsContent value="paths" className="space-y-4">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        {[
-                            {
-                                slug: "data-analyst",
-                                title: "Data Analyst",
-                            },
-                            {
-                                slug: "software-engineer",
-                                title: "Software Engineer",
-                            },
-                            {
-                                slug: "ux-designer",
-                                title: "UX Designer",
-                            },
-                        ].map((p) => (
-                            <Card key={p.slug}>
+                    <div className="space-y-6">
+                        {/* Summary Section */}
+                        {summary && (
+                            <Card className="border-l-4 border-blue-950 shadow-md">
                                 <CardHeader>
-                                    <CardTitle>{p.title}</CardTitle>
-                                    <CardDescription>
-                                        Why they fit, skills match, salaries and
-                                        trends
+                                    <CardTitle className="text-blue-950">
+                                        <Highlighter
+                                            action="underline"
+                                            color="#FF9800"
+                                        >
+                                            Career Summary
+                                        </Highlighter>
+                                    </CardTitle>
+                                    <CardDescription className="mt-2">
+                                        {summary}
                                     </CardDescription>
                                 </CardHeader>
-                                <CardContent>
-                                    <div className="mt-3 flex items-center gap-2">
-                                        <Button
-                                            asChild
-                                            size="sm"
-                                            className="text-xs"
-                                        >
-                                            <Link href={`/roadmap/${p.slug}`}>
-                                                View Roadmap
-                                            </Link>
-                                        </Button>
-                                        <Button
-                                            asChild
-                                            size="sm"
-                                            variant="outline"
-                                            className="text-xs"
-                                        >
-                                            <Link href="/skills">
-                                                Compare Skills
-                                            </Link>
-                                        </Button>
-                                    </div>
-                                </CardContent>
                             </Card>
-                        ))}
+                        )}
+
+                        {/* Career Recommendation Cards */}
+                        <div className="grid md:grid-cols-2 gap-5">
+                            {recommendations?.map((rec, idx) => (
+                                <Card
+                                    key={idx}
+                                    className="shadow-md hover:shadow-lg transition rounded-2xl"
+                                >
+                                    <CardHeader>
+                                        <CardTitle className="flex items-center justify-between">
+                                            {rec.title}
+                                            <Badge variant="secondary">
+                                                {rec.matchScore}% Match
+                                            </Badge>
+                                        </CardTitle>
+                                        <CardDescription>
+                                            {rec.industry}
+                                        </CardDescription>
+                                    </CardHeader>
+
+                                    <CardContent className="space-y-3">
+                                        <p className="text-sm text-gray-700">
+                                            <strong>Why Recommended:</strong>{" "}
+                                            {rec.whyRecommended}
+                                        </p>
+
+                                        <p className="text-sm">
+                                            <strong>Average Package:</strong>{" "}
+                                            {rec.averagePackage}
+                                        </p>
+
+                                        <p className="text-sm">
+                                            <strong>Future Scope:</strong>{" "}
+                                            {rec.futureScope}
+                                        </p>
+
+                                        {/* Required Skills */}
+                                        {rec.requiredSkills?.length > 0 && (
+                                            <div>
+                                                <p className="font-semibold">
+                                                    Required Skills:
+                                                </p>
+                                                <div className="flex flex-wrap gap-2 mt-1">
+                                                    {rec.requiredSkills.map(
+                                                        (skill, i) => (
+                                                            <Badge
+                                                                key={i}
+                                                                variant="outline"
+                                                            >
+                                                                {skill}
+                                                            </Badge>
+                                                        )
+                                                    )}
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {/* Learning Resources */}
+                                        {rec.learningResources?.length > 0 && (
+                                            <div>
+                                                <p className="font-semibold">
+                                                    Learning Resources:
+                                                </p>
+                                                <ul className="list-disc list-inside text-sm">
+                                                    {rec.learningResources.map(
+                                                        (res, i) => (
+                                                            <li key={i}>
+                                                                <a
+                                                                    href={
+                                                                        res.link
+                                                                    }
+                                                                    target="_blank"
+                                                                    rel="noopener noreferrer"
+                                                                    className="text-blue-600 hover:underline"
+                                                                >
+                                                                    {res.name} (
+                                                                    {res.type})
+                                                                </a>
+                                                            </li>
+                                                        )
+                                                    )}
+                                                </ul>
+                                            </div>
+                                        )}
+                                    </CardContent>
+                                </Card>
+                            ))}
+                        </div>
                     </div>
                 </TabsContent>
             </Tabs>

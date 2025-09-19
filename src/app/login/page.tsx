@@ -2,10 +2,13 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { useDispatch } from "react-redux";
 import { setCredentials } from "../../store/authSlice";
-import type { AppDispatch } from '@/store/store';
+import type { AppDispatch } from "@/store/store";
+import { Highlighter } from "@/components/ui/highlighter";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 
 export default function LoginForm() {
     const router = useRouter();
@@ -14,8 +17,6 @@ export default function LoginForm() {
         password: "",
     });
 
-    const [message, setMessage] = useState("");
-    const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
     const port = process.env.NEXT_PUBLIC_API_PORT;
     const dispatch = useDispatch<AppDispatch>();
@@ -29,8 +30,6 @@ export default function LoginForm() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setError("");
-        setMessage("");
         setLoading(true);
 
         try {
@@ -38,8 +37,10 @@ export default function LoginForm() {
                 `${port}/api/auth/login`,
                 formData
             );
-            setMessage(response.data.message || "Login successful!");
+
+            toast.success(response.data.message || "Login successful!");
             setFormData({ email: "", password: "" });
+
             dispatch(
                 setCredentials({
                     user: {
@@ -50,15 +51,16 @@ export default function LoginForm() {
                 })
             );
 
-            // Redirect to dashboard or home page after login
+            // Redirect to dashboard/home
             setTimeout(() => {
                 router.push("/");
             }, 1000);
-        } catch (err: any) {
-            if (err.response && err.response.data) {
-                setError(err.response.data.message);
+        } catch (err) {
+            const error = err as AxiosError<{ message: string }>; // 👈 Typed error
+            if (error.response?.data?.message) {
+                toast.error(error.response.data.message);
             } else {
-                setError("An unexpected error occurred.");
+                toast.error("An unexpected error occurred.");
             }
         } finally {
             setLoading(false);
@@ -66,22 +68,13 @@ export default function LoginForm() {
     };
 
     return (
-        <div className="flex items-center justify-center mt-24">
+        <div className="flex items-center justify-center my-36">
             <div className="w-full max-w-md bg-white rounded-xl shadow-lg p-8 space-y-6">
-                <h2 className="text-3xl font-bold text-center text-gray-700">
-                    Sign In
+                <h2 className="text-3xl font-bold text-center text-blue-950">
+                    <Highlighter action="underline" color="#FF9800">
+                        Signin
+                    </Highlighter>
                 </h2>
-
-                {message && (
-                    <div className="p-3 text-green-700 bg-green-100 border border-green-300 rounded">
-                        {message}
-                    </div>
-                )}
-                {error && (
-                    <div className="p-3 text-red-700 bg-red-100 border border-red-300 rounded">
-                        {error}
-                    </div>
-                )}
 
                 <form onSubmit={handleSubmit} className="space-y-5">
                     <div>
@@ -116,28 +109,28 @@ export default function LoginForm() {
                         <p className="text-sm text-right">
                             <a
                                 href="/forgot-password"
-                                className="text-indigo-600 hover:underline"
+                                className="text-blue-950 hover:underline"
                             >
                                 Forgot Password?
                             </a>
                         </p>
                     </div>
 
-                    <button
+                    <Button
                         type="submit"
                         disabled={loading}
-                        className={`w-full py-2 rounded-lg text-white font-semibold ${
-                            loading
-                                ? "bg-indigo-300 cursor-not-allowed"
-                                : "bg-indigo-600 hover:bg-indigo-700"
+                        className={`w-full ${
+                            loading ? "cursor-not-allowed" : ""
                         } transition duration-200`}
                     >
                         {loading ? "Signing in..." : "Sign In"}
-                    </button>
+                    </Button>
                 </form>
 
                 <p className="text-sm text-center text-gray-500">
-                    Don’t have an account?{" "}
+                    <Highlighter action="highlight" color="#87CEFA">
+                        Don’t have an account?
+                    </Highlighter>{" "}
                     <a
                         href="/register"
                         className="text-indigo-600 hover:underline"

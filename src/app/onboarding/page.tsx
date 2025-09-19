@@ -5,13 +5,16 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
+import { Highlighter } from "@/components/ui/highlighter";
+import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
+import type { AppDispatch } from "@/store/store";
 
 import {
     Card,
     CardContent,
     CardDescription,
     CardHeader,
-    CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -34,13 +37,10 @@ export default function OnboardingPage() {
     const [preferredIndustries, setPreferredIndustries] = useState("");
     const [interests, setInterests] = useState("");
     const [resumeFile, setResumeFile] = useState<File | null>(null);
-    const [resumeMessage, setResumeMessage] = useState("");
     const [linkedInProfile, setLinkedInProfile] = useState("");
     const [location, setLocation] = useState("");
 
     const [loading, setLoading] = useState(false);
-    const [message, setMessage] = useState("");
-    const [error, setError] = useState("");
     const [extracting, setExtracting] = useState(false);
 
     const port = process.env.NEXT_PUBLIC_API_PORT || "";
@@ -55,51 +55,20 @@ export default function OnboardingPage() {
         }
     };
 
-    // Handler for LinkedIn URL input
-    const handleLinkedInChange = (e: ChangeEvent<HTMLInputElement>) => {
-        setLinkedInProfile(e.target.value);
-        if (e.target.value) {
-            setResumeFile(null); // Clear resume file if URL is entered
-            handleLinkedInSubmit(e.target.value);
-        }
-    };
-
-    // extract data from linkedin
-    const handleLinkedInSubmit = async (url: String) => {
-        if (!url) return;
-        setExtracting(true);
-        try {
-            const response = await fetch(`${port}/api/upload/extract-linkedin`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-                },
-                body: JSON.stringify({ url }),
-            });
-            const data = await response.json();
-            console.log("Extracted LinkedIn data:", data);
-        } catch (error) {
-            console.error("LinkedIn extraction failed:", error);
-        } finally {
-            setExtracting(false);
-        }
-    };
-
     // Upload and extract resume data
     const handleUpload = async (file: File) => {
         if (!file) {
-            alert("Please select a file first!");
+            toast.info("Please select a file first!");
             return;
         }
 
         setExtracting(true);
         const formData = new FormData();
-        formData.append("resume", file); // 'resume' should match multer field name
+        formData.append("resume", file);
 
         try {
             const response = await axios.post(
-                `${port}/api/upload-resume`,
+                `${port}/api/upload/upload-resume`,
                 formData,
                 {
                     headers: {
@@ -108,10 +77,12 @@ export default function OnboardingPage() {
                     },
                 }
             );
-            setResumeMessage(response.data.message || "Resume uploaded.");
+
+            console.log(response);
+            toast.success(response.data.message || "Resume uploaded.");
         } catch (error: unknown) {
             console.error("Upload failed:", error);
-            setResumeMessage("Failed to upload resume.");
+            toast.error("Failed to upload resume.");
         } finally {
             setExtracting(false);
         }
@@ -119,16 +90,14 @@ export default function OnboardingPage() {
 
     const handleSubmit = async () => {
         setLoading(true);
-        setError("");
-        setMessage("");
 
         if (!resumeFile && linkedInProfile.trim() === "") {
-            setError("Please upload a resume or enter a LinkedIn URL.");
+            toast.error("Please upload a resume or enter a LinkedIn URL.");
             setLoading(false);
             return;
         }
         if (resumeFile && linkedInProfile.trim() !== "") {
-            setError(
+            toast.info(
                 "Please provide only one option: either resume or LinkedIn URL."
             );
             setLoading(false);
@@ -161,7 +130,7 @@ export default function OnboardingPage() {
                 }
             );
 
-            setMessage(
+            toast.success(
                 response.data.message || "Profile updated successfully!"
             );
             setTimeout(() => {
@@ -169,9 +138,11 @@ export default function OnboardingPage() {
             }, 1000);
         } catch (error: unknown) {
             if (axios.isAxiosError(error)) {
-                setError(error.response?.data?.message || "An error occurred.");
+                toast.error(
+                    error.response?.data?.message || "An error occurred."
+                );
             } else {
-                setError("An unexpected error occurred.");
+                toast.error("An unexpected error occurred.");
             }
         } finally {
             setLoading(false);
@@ -179,26 +150,37 @@ export default function OnboardingPage() {
     };
 
     return (
-        <div className="max-w-2xl mx-auto min-h-screen flex items-center justify-center p-4 mt-20">
+        <div className="px-4 md:px-36 gap-5 mx-auto min-h-screen grid md:grid-cols-2 justify-center p-4 my-28">
+            <div className="">
+                <h1 className="text-4xl font-semibold text-blue-950">
+                    {" "}
+                    <Highlighter action="underline" color="#FF9800">
+                        Tell Us About You
+                    </Highlighter>
+                </h1>
+
+                <p className="text-muted-foreground text-pretty text-lg mt-5">
+                    <Highlighter action="highlight" color="#87CEFA">
+                        Help us personalize your career journey
+                    </Highlighter>
+                    y by sharing some details. The information you provide will
+                    allow us to{" "}
+                    <Highlighter action="underline" color="#FF9800">
+                        recommend the best career paths,
+                    </Highlighter>{" "}
+                    learning resources, and opportunities
+                    <Highlighter action="highlight" color="#FF9800">
+                        tailored to your profile.
+                    </Highlighter>{" "}
+                </p>
+            </div>
             <Card className="w-full">
                 <CardHeader>
-                    <CardTitle>Tell us about you</CardTitle>
                     <CardDescription>
                         We’ll personalize your career journey
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                    {message && (
-                        <div className="p-3 text-green-700 bg-green-100 border border-green-300 rounded">
-                            {message}
-                        </div>
-                    )}
-                    {error && (
-                        <div className="p-3 text-red-700 bg-red-100 border border-red-300 rounded">
-                            {error}
-                        </div>
-                    )}
-
                     <div className="grid md:grid-cols-2 gap-4">
                         <div className="grid gap-2">
                             <Label htmlFor="age">Age</Label>
@@ -269,22 +251,32 @@ export default function OnboardingPage() {
                             onChange={handleFileChange}
                             disabled={linkedInProfile.trim() !== ""}
                         />
-                        {resumeMessage && (
-                            <p className="text-sm text-green-600">
-                                {resumeMessage}
-                            </p>
-                        )}
-                        <Input
+                        <p className="text-xs text-green-600 flex items-center gap-1">
+                            {extracting ? (
+                                <>
+                                    <Loader2 className="animate-spin size-4" />
+                                    Extracting skills from resume...
+                                </>
+                            ) : (
+                                "We’ll auto-extract skills."
+                            )}
+                        </p>
+                        {/* <Input
                             placeholder="https://www.linkedin.com/in/your-handle"
                             value={linkedInProfile}
                             onChange={handleLinkedInChange}
                             disabled={resumeFile !== null}
                         />
-                        <p className="text-xs text-muted-foreground">
-                            {extracting
-                                ? "Extracting skills from resume..."
-                                : "We’ll auto-extract skills."}
-                        </p>
+                        <p className="text-xs text-muted-foreground flex items-center gap-1">
+                            {extracting ? (
+                                <>
+                                    <Loader2 className="animate-spin size-4" />
+                                    Extracting skills from resume...
+                                </>
+                            ) : (
+                                "We’ll auto-extract skills."
+                            )}
+                        </p> */}
                     </div>
 
                     <div className="grid gap-2">
@@ -298,7 +290,7 @@ export default function OnboardingPage() {
 
                     <div className="flex items-center gap-3">
                         <Button
-                            className="bg-brand text-white hover:bg-brand/90"
+                            className=""
                             onClick={handleSubmit}
                             disabled={loading}
                         >

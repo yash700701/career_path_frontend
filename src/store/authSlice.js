@@ -3,8 +3,8 @@ import { createSlice } from '@reduxjs/toolkit';
 const initialState = {
   user: null,
   token: null,
-  quizId: null,
   quizCompleted: false,
+  recommendationGenerated: false,
 };
 
 const authSlice = createSlice({
@@ -22,8 +22,11 @@ const authSlice = createSlice({
     setQuizCompleted: (state, action) => {
       state.quizCompleted = action.payload.quizCompleted;
     },
+    setRecommendationGenerated: (state, action) => {
+      state.recommendationGenerated = action.payload.recommendationGenerated;
+    },
   },
 });
 
-export const { setCredentials, logout, setQuizCompleted } = authSlice.actions;
+export const { setCredentials, logout, setQuizCompleted, setRecommendationGenerated } = authSlice.actions;
 export default authSlice.reducer;
