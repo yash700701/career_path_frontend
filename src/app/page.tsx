@@ -14,14 +14,10 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
-import { useTheme } from "next-themes";
 import interview from "../../public/christina-wocintechchat-com-LQ1t-8Ms5PY-unsplash.jpg";
 import resumeBuilder from "../../public/resume-genius-9si2noVCVH8-unsplash (1).jpg";
 import { User, FileText, ClipboardList, Brain, Target } from "lucide-react";
-import { useSelector } from "react-redux";
-import type { RootState } from "@/store/store";
 import { useRouter } from "next/navigation";
-
 
 const steps = [
     {
@@ -127,13 +123,8 @@ const ReviewCard = ({
 
 export default function HomePage() {
     const router = useRouter();
-    const token = useSelector((state: RootState) => state.auth.token);
-     const handleClick = () => {
-        if (!token) {
-            router.push("/login");
-        } else {
-            router.push("/onboarding");
-        }
+    const handleClick = () => {
+        router.push("/onboarding");
     };
     return (
         <div className="space-y-10 px-2 md:px-36">
