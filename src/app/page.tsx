@@ -4,7 +4,6 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Marquee } from "../components/ui/marquee";
-import chat from "../../public/chat.png";
 import { Highlighter } from "@/components/ui/highlighter";
 import Image from "next/image";
 import user from "../../public/user.png";
@@ -127,7 +126,6 @@ const ReviewCard = ({
 };
 
 export default function HomePage() {
-    const { theme } = useTheme();
     const router = useRouter();
     const token = useSelector((state: RootState) => state.auth.token);
      const handleClick = () => {
