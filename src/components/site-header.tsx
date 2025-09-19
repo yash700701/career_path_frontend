@@ -30,6 +30,7 @@ export function SiteHeader() {
     const { user } = useSelector((state: RootState) => state.auth);
     const dispatch = useDispatch<AppDispatch>();
     const router = useRouter();
+    const token = useSelector((state: RootState) => state.auth.token);
 
     const handleLogout = () => {
         dispatch(logout());
@@ -37,7 +38,11 @@ export function SiteHeader() {
     };
 
     const handleClick = () => {
-        router.push("/onboarding");
+        if (!token) {
+            router.push("/login");
+        } else {
+            router.push("/onboarding");
+        }
     };
 
     return (
