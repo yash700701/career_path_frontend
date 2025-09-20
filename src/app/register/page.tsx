@@ -5,6 +5,7 @@ import axios, { AxiosError } from "axios";
 import { toast } from "sonner";
 import { Highlighter } from "@/components/ui/highlighter";
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 
 export default function RegisterForm() {
     const [formData, setFormData] = useState({
@@ -14,6 +15,7 @@ export default function RegisterForm() {
     });
 
     const [loading, setLoading] = useState(false);
+    const router = useRouter();
 
     const port = process.env.NEXT_PUBLIC_API_PORT || "http://localhost:5000";
 
@@ -40,6 +42,9 @@ export default function RegisterForm() {
                     "Registration successful! Check your email."
             );
             setFormData({ name: "", email: "", password: "" });
+            setTimeout(() => {
+                router.push("/login");
+            }, 1000);
         } catch (err) {
             const error = err as AxiosError<{ message: string }>; // 👈 typed error
             if (error.response?.data?.message) {
