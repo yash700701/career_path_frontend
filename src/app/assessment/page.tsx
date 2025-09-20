@@ -344,8 +344,12 @@ export default function AssessmentPage() {
         }
     };
 
+    const handelGenerateNewQuiz = () => {
+        createQuiz();
+    }
+
     return (
-        <div className="space-y-6 px-2 md:px-36 mt-24 mb-10">
+        <div className="space-y-6 px-2 md:px-10 lg:px-24 mt-24 mb-10">
             <h1 className="text-4xl font-semibold text-blue-950">
                 {" "}
                 <Highlighter action="underline" color="#FF9800">
@@ -514,6 +518,19 @@ export default function AssessmentPage() {
                                                 </Highlighter>{" "}
                                                 this quiz. Thank you!
                                             </p>
+
+                                            <Button
+                                                onClick={
+                                                    handelGenerateNewQuiz
+                                                }
+                                                variant="outline"
+                                                className="mt-3 mr-3 text-xs sm:text-md"
+                                                disabled={
+                                                    generatingRecommendation
+                                                }
+                                            >
+                                                Start new quiz
+                                            </Button>
                                             <Button
                                                 onClick={
                                                     generateCareerRecommendation

@@ -2,7 +2,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 
 export default function TrendsPage() {
   return (
-    <div className="space-y-6 my-24 px-4 md:px-36">
+    <div className="space-y-6 my-24 px-2 md:px-10 lg:px-24">
       <h1 className="text-2xl font-semibold">Job Market & Future Trends</h1>
       <div className="grid md:grid-cols-3 gap-4">
         <Card>

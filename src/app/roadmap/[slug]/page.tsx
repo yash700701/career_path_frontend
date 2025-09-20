@@ -6,7 +6,7 @@ export default function RoadmapPage({ params }: { params: { slug: string } }) {
     .map((s) => s[0]?.toUpperCase() + s.slice(1))
     .join(" ")
   return (
-    <div className="space-y-6 my-24 px-4 md:px-36">
+    <div className="space-y-6 my-24 px-2 md:px-10 lg:px-24">
       <h1 className="text-2xl font-semibold">{title} Roadmap</h1>
 
       <Card>

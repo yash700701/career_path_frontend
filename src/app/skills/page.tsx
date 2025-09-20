@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button"
 
 export default function SkillsHubPage() {
   return (
-    <div className="space-y-6 my-24 px-4 md:px-36">
+    <div className="space-y-6 my-24 px-2 md:px-10 lg:px-24">
       <h1 className="text-2xl font-semibold">Skill Gap Analyzer</h1>
       <Card>
         <CardHeader>

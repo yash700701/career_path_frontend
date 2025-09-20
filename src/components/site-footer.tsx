@@ -29,8 +29,8 @@ export function SiteFooter() {
     //     return () => clearInterval(intervalId); // Cleanup on unmount
     // }, [port]);
     return (
-        <footer className="border-t bg-white w-full px-4 md:px-36">
-            <div className="container mx-auto p-4 flex flex-col md:flex-row items-center justify-between gap-3 text-sm text-muted-foreground">
+        <footer className="border-t bg-white w-full ">
+            <div className="container mx-auto px-4 py-4 md:px-10 lg:px-24 flex flex-col md:flex-row items-center justify-between gap-3 text-sm text-muted-foreground">
                 <div className="flex items-center gap-4">
                     <p>© {new Date().getFullYear()} CareerPath</p>
 

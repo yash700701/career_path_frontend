@@ -135,8 +135,8 @@ export default function HomePage() {
         }
     };
     return (
-        <div className="space-y-10 px-2 md:px-36">
-            <section className="text-center mt-28 text-blue-950 max-w-3xl mx-auto space-y-4">
+        <div className="space-y-10 px-2 md:px-10 lg:px-24">
+            <section className="text-center mt-28 text-blue-950 mx-auto space-y-4">
                 <h1 className="text-5xl md:text-[70px] font-semibold text-balance">
                     Your{" "}
                     <Highlighter action="underline" color="#FF9800">
@@ -169,7 +169,7 @@ export default function HomePage() {
                 </div>
             </section>
 
-            <section className="grid md:grid-cols-4 gap-3">
+            <section className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
                 {[
                     "AI-Powered Career Guidance",
                     "Skill Gap Analysis",
@@ -178,7 +178,7 @@ export default function HomePage() {
                 ].map((title) => (
                     <Card
                         key={title}
-                        className=" max-w-sm w-full border shadow"
+                        className=" w-full border shadow"
                     >
                         <CardHeader className="p-4 ">
                             <CardTitle className="text-blue-950 text-lg">
