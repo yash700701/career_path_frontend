@@ -21,6 +21,7 @@ const nav = [
   { href: "/trends", label: "Trends" },
   { href: "/tools/resume", label: "Resume" },
   { href: "/tools/interview", label: "Interview" },
+  { href: "/chat", label: "Chat" },
 ];
 
 export function SiteHeader() {
@@ -59,7 +60,7 @@ export function SiteHeader() {
         </Link>
 
         {/* Desktop Nav (scrollable if too many links) */}
-        <nav className="hidden md:flex flex-1 ml-5 lg:ml-10 items-center gap-6 overflow-x-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-transparent">
+        <nav className="hidden md:flex flex-1 ml-5 lg:ml-10 items-center gap-4 overflow-x-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-transparent">
           {nav.map((item) => (
             <Link
               key={item.href}
@@ -105,7 +106,7 @@ export function SiteHeader() {
             </Button>
           )}
 
-          <Button onClick={handleClick} className="hidden sm:inline-flex">
+          <Button onClick={handleClick} className="inline-flex">
             Get Started
           </Button>
 
@@ -122,13 +123,13 @@ export function SiteHeader() {
 
       {/* Mobile Dropdown */}
       {open && (
-        <div className="md:hidden border-t p-5 bg-white animate-slideDown">
-          <div className="grid grid-cols-1 gap-3">
+        <div className="md:hidden border-t p-5 bg-background/20 backdrop-blur animate-slideDown">
+          <div className="grid grid-cols-2 gap-3">
             {nav.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
-                className="block text-md text-muted-foreground hover:text-blue-950 transition"
+                className="block text-lg text-muted-foreground hover:text-blue-950 transition"
                 onClick={() => setOpen(false)}
               >
                 {item.label}
@@ -136,7 +137,7 @@ export function SiteHeader() {
             ))}
             {user ? (
               <button
-                className="text-sm text-red-600 hover:text-red-700"
+                className="text-xl bg-red-100 rounded-md py-1 border border-red-600 mt-2 text-red-600 hover:text-red-700"
                 onClick={() => {
                   handleLogout();
                   setOpen(false);
@@ -147,15 +148,12 @@ export function SiteHeader() {
             ) : (
               <Link
                 href="/login"
-                className="text-sm text-muted-foreground hover:text-foreground"
+                className="text-xl mt-2 text-blue-950 hover:text-foreground"
                 onClick={() => setOpen(false)}
               >
                 Sign in
               </Link>
             )}
-            <Button onClick={handleClick} className="w-full">
-              Get Started
-            </Button>
           </div>
         </div>
       )}
