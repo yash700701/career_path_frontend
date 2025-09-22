@@ -165,7 +165,7 @@ export default function CareerChatbot() {
                             }`}
                         >
                             <div
-                                className={`rounded-2xl px-4 py-2 max-w-[75%] shadow ${
+                                className={`rounded-2xl my-2 px-4 py-2 max-w-[75%] shadow ${
                                     msg.role === "user"
                                         ? "bg-blue-950 text-white"
                                         : "bg-white border text-gray-800"
