@@ -131,8 +131,8 @@ export default function CareerChatbot() {
             // Clear input box
             setInput("");
         } catch (err) {
-            console.error("Failed to generate question:", err);
-            toast.error("Error generating question");
+            console.error("Failed to generate response:", err);
+            toast.error("Error generating response");
         } finally {
             setGeneratingResponse(false);
         }

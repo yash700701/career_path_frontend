@@ -21,7 +21,6 @@ import { useSelector } from "react-redux";
 import type { RootState } from "@/store/store";
 import { useRouter } from "next/navigation";
 
-
 const steps = [
     {
         title: "Onboarding Form",
@@ -127,11 +126,18 @@ const ReviewCard = ({
 export default function HomePage() {
     const router = useRouter();
     const token = useSelector((state: RootState) => state.auth.token);
-     const handleClick = () => {
+    const handleClick = () => {
         if (!token) {
             router.push("/login");
         } else {
             router.push("/onboarding");
+        }
+    };
+    const handleOpenChat = () => {
+        if (!token) {
+            router.push("/login");
+        } else {
+            router.push("/chat");
         }
     };
     return (
@@ -176,10 +182,7 @@ export default function HomePage() {
                     "Job Market Trends",
                     "Personalized Roadmap",
                 ].map((title) => (
-                    <Card
-                        key={title}
-                        className=" w-full border shadow"
-                    >
+                    <Card key={title} className=" w-full border shadow">
                         <CardHeader className="p-4 ">
                             <CardTitle className="text-blue-950 text-lg">
                                 {title}
@@ -314,11 +317,10 @@ export default function HomePage() {
                             interview tips, resume feedback, or career advice —
                             anytime you need it.
                         </p>
-                        <Link href="/chat">
-                            <Button size="lg" className="">
-                                Chat Now
-                            </Button>
-                        </Link>
+
+                        <Button size="lg" onClick={handleOpenChat} className="">
+                            Chat Now
+                        </Button>
                     </div>
 
                     {/* Right Content (Optional placeholder for balance) */}
